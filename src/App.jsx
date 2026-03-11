@@ -123,6 +123,56 @@ const ShootingStar = () => {
   );
 };
 
+const Thunderstorm = () => {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    let ctx = gsap.context(() => {
+      const flashes = gsap.utils.toArray('.lightning-flash');
+
+      const triggerFlash = (flash) => {
+        const tl = gsap.timeline({
+          onComplete: () => {
+            gsap.set(flash, {
+              top: `${Math.random() * 40 + 20}%`,
+              left: `${Math.random() * 60 + 20}%`,
+              scale: Math.random() * 1.5 + 0.5
+            });
+            setTimeout(() => triggerFlash(flash), Math.random() * 8000 + 2000);
+          }
+        });
+
+        tl.to(flash, { opacity: 0.4, duration: 0.05, ease: 'power2.out' })
+          .to(flash, { opacity: 0.1, duration: 0.05 })
+          .to(flash, { opacity: 0.6, duration: 0.05 })
+          .to(flash, { opacity: 0, duration: 0.4, ease: 'power4.out' });
+      };
+
+      flashes.forEach((flash, i) => {
+        setTimeout(() => triggerFlash(flash), i * 3000 + 1000);
+      });
+    }, containerRef);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 z-10 pointer-events-none">
+      {[...Array(3)].map((_, i) => (
+        <div
+          key={i}
+          className="lightning-flash absolute w-48 h-48 rounded-full opacity-0"
+          style={{
+            background: 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(100,200,255,0.4) 40%, transparent 70%)',
+            top: `${Math.random() * 40 + 20}%`,
+            left: `${Math.random() * 60 + 20}%`,
+            filter: 'blur(20px)'
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 const StarryBackground = () => {
   const containerRef = useRef(null);
 
@@ -507,6 +557,7 @@ export default function App() {
           <StarryBackground />
           <Satellite />
           <ShootingStar />
+          <Thunderstorm />
         </div>
 
         <div className="relative z-10 max-w-4xl text-background">
