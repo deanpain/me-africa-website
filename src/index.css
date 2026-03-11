@@ -40,19 +40,14 @@ body::before {
   transform: translateY(-2px);
 }
 
-/* Glitch Animation from animation.txt */
+/* High-Fidelity Glitch Animation from Label Noir Concept */
 .glitch-container {
-  /* Removed Rajdhani as requested, will inherit site fonts */
-  letter-spacing: 0.025em;
-  text-shadow: 1px 2px 4px rgba(255, 255, 255, .12);
   display: inline-block;
+  text-shadow: 1px 2px 4px rgba(255, 255, 255, 0.12);
 }
 
 .glitch-container span {
   display: inline-block;
-  animation-duration: 2s;
-  animation-iteration-count: 0;
-  /* Changed to 1 or infinite in component */
   opacity: 0;
   animation-fill-mode: forwards;
 }
@@ -86,7 +81,7 @@ body::before {
   }
 
   10% {
-    opacity: .66;
+    opacity: 0.66;
   }
 
   15% {
@@ -120,7 +115,7 @@ body::before {
   }
 
   78% {
-    opacity: .33;
+    opacity: 0.33;
   }
 
   80% {
@@ -138,7 +133,7 @@ body::before {
   }
 
   50% {
-    opacity: .8;
+    opacity: 0.8;
   }
 
   100% {
@@ -156,7 +151,7 @@ body::before {
   }
 
   35% {
-    opacity: .33;
+    opacity: 0.33;
   }
 
   37% {
@@ -164,7 +159,7 @@ body::before {
   }
 
   39% {
-    opacity: .66;
+    opacity: 0.66;
   }
 
   41% {
@@ -206,7 +201,7 @@ body::before {
   }
 
   85% {
-    opacity: .66;
+    opacity: 0.66;
   }
 
   100% {
@@ -272,24 +267,24 @@ body::before {
   }
 }
 
-/* Global Glitch/Fadeout - Now ends at full opacity */
-@keyframes glitch-fadeout {
+/* Glitch Reveal (modified from original fadeout to remain visible) */
+@keyframes glitch-reveal {
   0% {
     opacity: 1;
   }
 
   80% {
-    opacity: .2;
+    opacity: 0.2;
     transform: translateX(0px) translateY(0px);
   }
 
   81% {
-    opacity: .8;
+    opacity: 0.8;
     transform: translateX(10px) translateY(20px);
   }
 
   82% {
-    opacity: .18;
+    opacity: 0.18;
     transform: translateX(-30px) translateY(-5px);
   }
 
@@ -307,8 +302,8 @@ body::before {
   }
 }
 
-.animate-glitch-fadeout {
-  animation: glitch-fadeout 2s 3s forwards;
+.glitch-active {
+  animation: glitch-reveal 2s 3s forwards;
 }
 
 .glitch-span-1 {

@@ -417,20 +417,24 @@ const SchedulerCard = () => {
   );
 };
 
-const GlitchTitle = ({ text = "ME-AFRICA" }) => {
+const GlitchTitle = ({ text = "Across Oceans & Continents" }) => {
   return (
-    <div className="glitch-container animate-glitch-fadeout mb-4">
-      {text.split('').map((char, i) => (char === ' ' ? (
-        <span key={i} style={{ width: '20px' }}>&nbsp;</span>
-      ) : (
-        <span key={i} className={`glitch-span-${(i % 9) + 1}`}>
-          {char}
-        </span>
-      )))}
+    <div className="glitch-container glitch-active">
+      {text.split('').map((char, i) => {
+        if (char === ' ') {
+          return <span key={i}>&nbsp;</span>;
+        }
+        // Map characters to 1-9 based on their index (1-indexed for CSS)
+        const glitchIndex = (i % 9) + 1;
+        return (
+          <span key={i} className={`glitch-letter-${glitchIndex}`}>
+            {char}
+          </span>
+        );
+      })}
     </div>
   );
 };
-
 
 
 // --- MAIN APP COMPONENT ---
@@ -581,7 +585,7 @@ export default function App() {
               Connecting your brand
             </span>
             <div className="hero-text font-drama text-5xl md:text-7xl lg:text-8xl leading-[1.1]">
-              <GlitchTitle text="Across Oceans & Continents." />
+              <GlitchTitle text="Across Oceans & Continents" />
             </div>
           </h1>
           <p className="hero-text mt-6 text-lg md:text-xl text-accent/80 max-w-2xl font-sans font-light">
