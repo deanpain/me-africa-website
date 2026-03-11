@@ -54,6 +54,114 @@ const MagneticButton = ({ children, className = '', onClick }) => {
 
 // --- MICRO-UI CARDS FOR FEATURES SECTION ---
 
+// --- MICRO-UI CARDS FOR FEATURES SECTION ---
+
+const Satellite = () => {
+  const satelliteRef = useRef(null);
+
+  useEffect(() => {
+    let ctx = gsap.context(() => {
+      // Slow drift across the sky
+      gsap.to(satelliteRef.current, {
+        x: '200vw',
+        y: '50vh',
+        rotation: 360,
+        duration: 120,
+        repeat: -1,
+        ease: 'none'
+      });
+    }, satelliteRef);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div ref={satelliteRef} className="absolute -left-20 top-[15%] opacity-40 z-10 pointer-events-none scale-75">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 10l5 5m10 10l5 5M10 25l5-5m10-10l5-5M5 15h30v10H5V15z" stroke="white" strokeWidth="1" />
+        <circle cx="20" cy="20" r="4" fill="white" />
+        <rect x="18" y="10" width="4" height="20" fill="white" opacity="0.5" />
+      </svg>
+    </div>
+  );
+};
+
+const ShootingStar = () => {
+  const starRef = useRef(null);
+
+  useEffect(() => {
+    let ctx = gsap.context(() => {
+      const triggerStar = () => {
+        const startX = Math.random() * 100;
+        const startY = Math.random() * 40;
+
+        gsap.fromTo(starRef.current,
+          { x: `${startX}vw`, y: `${startY}vh`, opacity: 0, scale: 0, rotation: -45 },
+          {
+            x: `${startX + 40}vw`,
+            y: `${startY + 40}vh`,
+            opacity: 1,
+            scale: 1,
+            duration: 0.8,
+            ease: 'power2.in',
+            onComplete: () => {
+              gsap.to(starRef.current, { opacity: 0, scale: 0, duration: 0.2 });
+              setTimeout(triggerStar, Math.random() * 10000 + 5000);
+            }
+          }
+        );
+      };
+
+      setTimeout(triggerStar, 3000);
+    }, starRef);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div ref={starRef} className="absolute top-0 left-0 w-32 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-0 z-10 pointer-events-none" style={{ transform: 'rotate(-45deg)' }}>
+      <div className="absolute right-0 top-0 w-1 h-1 bg-white rounded-full blur-[2px] shadow-[0_0_10px_white]"></div>
+    </div>
+  );
+};
+
+const StarryBackground = () => {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    let ctx = gsap.context(() => {
+      const stars = gsap.utils.toArray('.star-particle');
+      stars.forEach(star => {
+        gsap.to(star, {
+          opacity: () => Math.random() * 0.8 + 0.2,
+          duration: () => Math.random() * 3 + 1,
+          repeat: -1,
+          yoyo: true,
+          ease: 'power1.inOut',
+          delay: Math.random() * 5
+        });
+      });
+    }, containerRef);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 pointer-events-none z-0">
+      {[...Array(50)].map((_, i) => (
+        <div
+          key={i}
+          className="star-particle absolute bg-white rounded-full"
+          style={{
+            top: `${Math.random() * 60}%`,
+            left: `${Math.random() * 100}%`,
+            width: `${Math.random() * 2 + 1}px`,
+            height: `${Math.random() * 2 + 1}px`,
+            opacity: Math.random() * 0.4
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 const ShufflerCard = () => {
   const [items, setItems] = useState([
     { id: 1, text: 'Distributor — UAE', color: 'bg-blue-500' },
@@ -394,6 +502,11 @@ export default function App() {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#001020] via-[#002040]/80 to-transparent"></div>
+
+          {/* CINEMATIC ENHANCEMENTS */}
+          <StarryBackground />
+          <Satellite />
+          <ShootingStar />
         </div>
 
         <div className="relative z-10 max-w-4xl text-background">
