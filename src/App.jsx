@@ -418,20 +418,25 @@ const SchedulerCard = () => {
 };
 
 const GlitchTitle = ({ text = "Across Oceans & Continents" }) => {
+  const words = text.split(' ');
+  let globalCharIndex = 0;
+
   return (
     <div className="glitch-container glitch-active">
-      {text.split('').map((char, i) => {
-        if (char === ' ') {
-          return <span key={i}>&nbsp;</span>;
-        }
-        // Map characters to 1-9 based on their index (1-indexed for CSS)
-        const glitchIndex = (i % 9) + 1;
-        return (
-          <span key={i} className={`glitch-letter-${glitchIndex}`}>
-            {char}
-          </span>
-        );
-      })}
+      {words.map((word, wordIdx) => (
+        <span key={wordIdx} className="inline-block whitespace-nowrap">
+          {word.split('').map((char, i) => {
+            globalCharIndex++;
+            const glitchIndex = ((globalCharIndex - 1) % 9) + 1;
+            return (
+              <span key={i} className={`glitch-letter-${glitchIndex}`}>
+                {char}
+              </span>
+            );
+          })}
+          {wordIdx < words.length - 1 && <span className="inline-block">&nbsp;</span>}
+        </span>
+      ))}
     </div>
   );
 };
