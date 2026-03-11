@@ -577,12 +577,12 @@ export default function App() {
 
         <div className="relative z-10 max-w-4xl text-background">
           <h1 className="flex flex-col gap-2">
-            <div className="hero-text">
-              <GlitchTitle text="ME-AFRICA" />
-            </div>
-            <span className="hero-text font-drama text-5xl md:text-7xl lg:text-8xl leading-[1.1]">
-              Across Oceans &amp; Continents.
+            <span className="hero-text font-heading text-xl md:text-3xl font-semibold tracking-wide text-accent uppercase mb-2">
+              Connecting your brand
             </span>
+            <div className="hero-text font-drama text-5xl md:text-7xl lg:text-8xl leading-[1.1]">
+              <GlitchTitle text="Across Oceans & Continents." />
+            </div>
           </h1>
           <p className="hero-text mt-6 text-lg md:text-xl text-accent/80 max-w-2xl font-sans font-light">
             Experienced guidance in connecting brands with reliable importers across Africa, the Middle East, and the Indian Ocean region.
