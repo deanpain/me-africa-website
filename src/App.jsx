@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, Globe, CheckCircle2, ChevronRight, Activity, Handshake, BarChart, Navigation, MousePointer2 } from 'lucide-react';
 import Lenis from 'lenis';
+import lukePhoto from './assets/luke-meyer.avif';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -427,7 +428,7 @@ export default function App() {
             <div className="md:col-span-5 reveal-up">
               <div className="relative rounded-[2rem] overflow-hidden shadow-2xl group">
                 <img
-                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1287&auto=format&fit=crop"
+                  src={lukePhoto}
                   alt="Luke Meyer - International Trade Expert"
                   className="w-full h-[500px] object-cover transition-transform duration-700 group-hover:scale-105"
                 />
