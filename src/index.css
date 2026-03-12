@@ -50,6 +50,9 @@ body::before {
 
 .glitch-container span {
   display: inline-block;
+}
+
+.glitch-container span[class^="glitch-letter"] {
   opacity: 0;
   animation-fill-mode: forwards;
 }
