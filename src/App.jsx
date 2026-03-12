@@ -46,7 +46,7 @@ const MagneticButton = ({ children, className = '', onClick }) => {
       className={`magnetic-btn rounded-full overflow-hidden relative group ${className}`}
     >
       <span className="absolute inset-0 w-full h-full bg-accent/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-0"></span>
-      <span className="relative z-10">{children}</span>
+      <span className="relative z-10 whitespace-nowrap flex items-center justify-center gap-2">{children}</span>
     </button>
   );
 };
