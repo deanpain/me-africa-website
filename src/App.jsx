@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowRight, Globe, CheckCircle2, ChevronRight, Activity, Handshake, BarChart, Navigation, MousePointer2 } from 'lucide-react';
+import { ArrowRight, Globe, CheckCircle2, ChevronRight, Activity, Handshake, BarChart, Navigation, MousePointer2, X } from 'lucide-react';
 import Lenis from 'lenis';
 import lukePhoto from './assets/luke-meyer.avif';
 
@@ -48,6 +48,253 @@ const MagneticButton = ({ children, className = '', onClick }) => {
       <span className="absolute inset-0 w-full h-full bg-accent/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-0"></span>
       <span className="relative z-10 whitespace-nowrap flex items-center justify-center gap-2">{children}</span>
     </button>
+  );
+};
+
+
+// --- CONTACT FORM MODAL ---
+
+const ContactFormModal = ({ isOpen, onClose }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    company: '',
+    message: ''
+  });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+      
+      // Animate modal in
+      gsap.fromTo(modalRef.current, 
+        { opacity: 0, scale: 0.9, y: 20 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+      );
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Here you would typically send the data to a backend
+    console.log('Form submitted:', formData);
+    setIsSubmitted(true);
+    
+    // Close modal after showing success
+    setTimeout(() => {
+      onClose();
+      setIsSubmitted(false);
+      setFormData({ name: '', email: '', company: '', message: '' });
+    }, 2000);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      
+      {/* Modal Content */}
+      <div 
+        ref={modalRef}
+        className="relative w-full max-w-lg bg-white rounded-[2rem] shadow-2xl p-6 md:p-10 max-h-[85vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close Button */}
+        <button 
+          onClick={onClose}
+          className="absolute top-5 right-5 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+        >
+          <X className="w-5 h-5 text-gray-600" />
+        </button>
+        
+        {/* Header */}
+        <div className="mb-8">
+          <h3 className="font-drama text-3xl text-dark mb-2">Get In Touch</h3>
+          <p className="text-dark/60 font-sans">
+            Ready to expand your brand? Let's discuss how we can help.
+          </p>
+        </div>
+        
+        {isSubmitted ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-green-600" />
+            </div>
+            <h4 className="font-heading text-xl text-dark mb-2">Message Sent!</h4>
+            <p className="text-dark/60 font-sans">We'll get back to you soon.</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-dark/70 mb-2">
+                Name *
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-sans"
+                placeholder="Your name"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-dark/70 mb-2">
+                Email *
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-sans"
+                placeholder="your@email.com"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="company" className="block text-sm font-medium text-dark/70 mb-2">
+                Company
+              </label>
+              <input
+                type="text"
+                id="company"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+                className="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-sans"
+                placeholder="Your company (optional)"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium text-dark/70 mb-2">
+                Message *
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                required
+                rows={4}
+                value={formData.message}
+                onChange={handleChange}
+                className="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-sans resize-none"
+                placeholder="Tell us about your brand and markets you're interested in..."
+              />
+            </div>
+            
+            <button
+              type="submit"
+              className="w-full bg-primary text-white py-4 rounded-xl font-semibold font-sans hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl"
+            >
+              Send Message
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
+// --- INFO MODAL (Privacy & Terms) ---
+
+const InfoModal = ({ isOpen, onClose, title, content }) => {
+  const modalRef = useRef(null);
+  const scrollContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      gsap.fromTo(modalRef.current, 
+        { opacity: 0, scale: 0.9, y: 20 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+      );
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  const handleWheel = (e) => {
+    e.stopPropagation();
+  };
+
+  const handleTouchMove = (e) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const isAtTop = scrollTop === 0;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight;
+    
+    // If at boundaries, prevent scroll from propagating
+    if ((e.touches[0].clientY > e.touches[0].previousClientY && isAtTop) ||
+        (e.touches[0].clientY < e.touches[0].previousClientY && isAtBottom)) {
+      e.preventDefault();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div 
+        ref={modalRef}
+        className="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div 
+        ref={scrollContainerRef}
+        className="p-6 md:p-10 max-h-[85vh] overflow-y-auto scroll-smooth" 
+        style={{ overscrollBehavior: 'contain', touchAction: 'pan-y' }}
+        onWheel={handleWheel}
+        onTouchMove={handleTouchMove}
+      >
+          <button 
+            onClick={onClose}
+            className="absolute top-5 right-5 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors z-10"
+          >
+            <X className="w-5 h-5 text-gray-600" />
+          </button>
+          <h3 className="font-drama text-3xl text-dark mb-6 pr-10">{title}</h3>
+          <div className="text-dark/70 font-sans space-y-4">
+            {content}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -123,16 +370,30 @@ const ShootingStar = () => {
   );
 };
 
+// Thunderstorm - static initial positions to prevent layout shift
+const INITIAL_FLASH_POSITIONS = Array(3).fill(null).map(() => ({
+  top: '30%',
+  left: '40%'
+}));
+
 const Thunderstorm = () => {
   const containerRef = useRef(null);
+  const [flashPositions, setFlashPositions] = useState(INITIAL_FLASH_POSITIONS);
 
   useEffect(() => {
+    // Compute random positions only on client to avoid hydration mismatch
+    setFlashPositions([...Array(3)].map(() => ({
+      top: `${Math.random() * 40 + 20}%`,
+      left: `${Math.random() * 60 + 20}%`
+    })));
+
     let ctx = gsap.context(() => {
       const flashes = gsap.utils.toArray('.lightning-flash');
 
       const triggerFlash = (flash) => {
         const tl = gsap.timeline({
           onComplete: () => {
+            // Randomize position and scale for next flash (client-side only)
             gsap.set(flash, {
               top: `${Math.random() * 40 + 20}%`,
               left: `${Math.random() * 60 + 20}%`,
@@ -157,14 +418,14 @@ const Thunderstorm = () => {
 
   return (
     <div ref={containerRef} className="absolute inset-0 z-10 pointer-events-none">
-      {[...Array(3)].map((_, i) => (
+      {flashPositions.map((pos, i) => (
         <div
           key={i}
           className="lightning-flash absolute w-48 h-48 rounded-full opacity-0"
           style={{
             background: 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(100,200,255,0.4) 40%, transparent 70%)',
-            top: `${Math.random() * 40 + 20}%`,
-            left: `${Math.random() * 60 + 20}%`,
+            top: pos.top,
+            left: pos.left,
             filter: 'blur(20px)'
           }}
         />
@@ -173,13 +434,32 @@ const Thunderstorm = () => {
   );
 };
 
+// StarryBackground - static initial stars to prevent layout shift
+const INITIAL_STARS = Array(50).fill(null).map(() => ({
+  top: '30%',
+  left: '50%',
+  width: '2px',
+  height: '2px',
+  opacity: 0.2
+}));
+
 const StarryBackground = () => {
   const containerRef = useRef(null);
+  const [stars, setStars] = useState(INITIAL_STARS);
 
   useEffect(() => {
+    // Compute random stars only on client to avoid hydration mismatch
+    setStars([...Array(50)].map(() => ({
+      top: `${Math.random() * 60}%`,
+      left: `${Math.random() * 100}%`,
+      width: `${Math.random() * 2 + 1}px`,
+      height: `${Math.random() * 2 + 1}px`,
+      opacity: Math.random() * 0.4
+    })));
+
     let ctx = gsap.context(() => {
-      const stars = gsap.utils.toArray('.star-particle');
-      stars.forEach(star => {
+      const starElements = gsap.utils.toArray('.star-particle');
+      starElements.forEach(star => {
         gsap.to(star, {
           opacity: () => Math.random() * 0.8 + 0.2,
           duration: () => Math.random() * 3 + 1,
@@ -195,17 +475,11 @@ const StarryBackground = () => {
 
   return (
     <div ref={containerRef} className="absolute inset-0 pointer-events-none z-0">
-      {[...Array(50)].map((_, i) => (
+      {stars.map((star, i) => (
         <div
           key={i}
           className="star-particle absolute bg-white rounded-full"
-          style={{
-            top: `${Math.random() * 60}%`,
-            left: `${Math.random() * 100}%`,
-            width: `${Math.random() * 2 + 1}px`,
-            height: `${Math.random() * 2 + 1}px`,
-            opacity: Math.random() * 0.4
-          }}
+          style={star}
         />
       ))}
     </div>
@@ -316,6 +590,11 @@ const TypewriterCard = () => {
 const ScannerCard = () => {
   const laserRef = useRef(null);
   const chartRef = useRef(null);
+  const [barHeights, setBarHeights] = useState(Array(12).fill('50%'));
+
+  useEffect(() => {
+    setBarHeights([...Array(12)].map(() => `${Math.random() * 80 + 20}%`));
+  }, []);
 
   useEffect(() => {
     let ctx = gsap.context(() => {
@@ -347,8 +626,8 @@ const ScannerCard = () => {
     <div ref={chartRef} className="reveal-up p-10 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors group relative overflow-hidden flex flex-col justify-between" style={{ transitionDelay: '200ms', minHeight: '380px' }}>
       <div className="mb-6 relative bg-[#001020]/50 rounded-xl border border-white/5 overflow-hidden p-4 h-[140px] w-full flex items-end justify-between gap-2">
         <div ref={laserRef} className="absolute top-0 left-0 w-full h-[2px] bg-primary shadow-[0_0_15px_3px_rgba(0,75,135,0.8)] z-10"></div>
-        {[...Array(12)].map((_, i) => (
-          <div key={i} className="w-full bg-white/10 rounded-t-sm relative bar-chart" style={{ height: `${Math.random() * 80 + 20}%` }}>
+        {barHeights.map((height, i) => (
+          <div key={i} className="w-full bg-white/10 rounded-t-sm relative bar-chart" style={{ height }}>
             <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
           </div>
         ))}
@@ -446,6 +725,9 @@ const GlitchTitle = ({ text = "Across Oceans & Continents" }) => {
 
 export default function App() {
   const containerRef = useRef(null);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   // Smooth Scroll Initialization
   useEffect(() => {
@@ -559,9 +841,9 @@ export default function App() {
         <div className="hidden md:flex items-center gap-8 font-sans text-sm font-medium">
           <button onClick={() => scrollTo('service')} className="link-lift hover:opacity-70 transition-colors">Service</button>
           <button onClick={() => scrollTo('expertise')} className="link-lift hover:opacity-70 transition-colors">Expertise</button>
-          <button onClick={() => scrollTo('contact')} className="link-lift hover:opacity-70 transition-colors">Contact</button>
+          <button onClick={() => setIsContactModalOpen(true)} className="link-lift hover:opacity-70 transition-colors">Contact</button>
         </div>
-        <MagneticButton onClick={() => scrollTo('contact')} className="bg-primary text-background px-5 py-2 text-sm font-medium shadow-lg hover:shadow-xl">
+        <MagneticButton onClick={() => setIsContactModalOpen(true)} className="bg-primary text-background px-5 py-2 text-sm font-medium shadow-lg hover:shadow-xl">
           Get in Touch
         </MagneticButton>
       </nav>
@@ -710,7 +992,7 @@ export default function App() {
             <p className="text-xl text-accent/70 font-sans mb-12 font-light">
               Connect your brand with the right partners across Africa, the Middle East, and the Indian Ocean.
             </p>
-            <MagneticButton onClick={() => scrollTo('contact')} className="bg-white text-[#001020] px-10 py-5 text-lg font-bold shadow-xl flex items-center gap-3">
+            <MagneticButton onClick={() => setIsContactModalOpen(true)} className="bg-white text-[#001020] px-10 py-5 text-lg font-bold shadow-xl flex items-center gap-3">
               Get In Touch <ChevronRight className="w-5 h-5" />
             </MagneticButton>
           </div>
@@ -721,12 +1003,12 @@ export default function App() {
               <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-left hover:text-white transition-colors">Home</button>
               <button onClick={() => scrollTo('service')} className="text-left hover:text-white transition-colors">Service</button>
               <button onClick={() => scrollTo('expertise')} className="text-left hover:text-white transition-colors">Expertise</button>
-              <button onClick={() => scrollTo('contact')} className="text-left hover:text-white transition-colors">Contact</button>
+              <button onClick={() => setIsContactModalOpen(true)} className="text-left hover:text-white transition-colors">Contact</button>
             </div>
             <div className="flex flex-col gap-4">
               <h4 className="text-white text-xs tracking-widest uppercase mb-2">Legal</h4>
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+              <button onClick={() => setIsPrivacyModalOpen(true)} className="text-left hover:text-white transition-colors">Privacy Policy</button>
+              <button onClick={() => setIsTermsModalOpen(true)} className="text-left hover:text-white transition-colors">Terms of Service</button>
             </div>
           </div>
         </div>
@@ -746,6 +1028,68 @@ export default function App() {
           </div>
         </div>
       </footer>
+      
+      {/* Contact Form Modal */}
+      <ContactFormModal 
+        isOpen={isContactModalOpen} 
+        onClose={() => setIsContactModalOpen(false)} 
+      />
+      
+      {/* Privacy Policy Modal */}
+      <InfoModal
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
+        title="Privacy Policy"
+        content={
+          <>
+            <p>At ME-AFRICA, we take your privacy seriously. This policy outlines how we collect, use, and protect your personal information.</p>
+            <h4 className="font-semibold text-dark mt-4">Information We Collect</h4>
+            <p>We collect information you provide directly to us, including name, email address, company details, and any messages you send us.</p>
+            <h4 className="font-semibold text-dark mt-4">How We Use Your Information</h4>
+            <p>We use the information you provide to respond to your inquiries, improve our services, and communicate with you about our offerings.</p>
+            <h4 className="font-semibold text-dark mt-4">Data Protection</h4>
+            <p>We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
+            <h4 className="font-semibold text-dark mt-4">Contact Us</h4>
+            <p>If you have any questions about this Privacy Policy, please contact us through our website.</p>
+          </>
+        }
+      />
+      
+      {/* Terms of Service Modal */}
+      <InfoModal
+        isOpen={isTermsModalOpen}
+        onClose={() => setIsTermsModalOpen(false)}
+        title="Terms of Service"
+        content={
+          <>
+            <p>Welcome to ME-AFRICA. By accessing our website and services, you agree to these terms and conditions. Please read these terms carefully before using our services.</p>
+            <h4 className="font-semibold text-dark mt-4">1. Services</h4>
+            <p>ME-AFRICA provides international trade facilitation services, connecting brands with importers and distributors across Africa, the Middle East, and the Indian Ocean region. Our services include market research, importer introductions, retail listing strategy, and HoReCa sector insights.</p>
+            <h4 className="font-semibold text-dark mt-4">2. User Responsibilities</h4>
+            <p>Users agree to provide accurate information and use our services for legitimate business purposes only. You warrant that any information you provide is true, accurate, and complete. You are responsible for maintaining the confidentiality of your account information.</p>
+            <h4 className="font-semibold text-dark mt-4">3. Intellectual Property</h4>
+            <p>All content on this website, including text, graphics, logos, images, and software, is the property of ME-AFRICA and is protected by copyright and other intellectual property laws. No part of this website may be reproduced, distributed, or transmitted without prior written permission.</p>
+            <h4 className="font-semibold text-dark mt-4">4. Confidentiality</h4>
+            <p>We are committed to protecting your confidential information. Any business information, trade secrets, or proprietary data shared with us will be treated as confidential and will not be disclosed to third parties without your explicit consent.</p>
+            <h4 className="font-semibold text-dark mt-4">5. Limitation of Liability</h4>
+            <p>ME-AFRICA provides services "as is" and does not guarantee specific business outcomes. We facilitate connections between brands and potential partners but do not endorse or guarantee any specific partner, transaction, or outcome. We shall not be liable for any indirect, incidental, or consequential damages.</p>
+            <h4 className="font-semibold text-dark mt-4">6. Third-Party Links</h4>
+            <p>Our website may contain links to third-party websites. These links are provided for convenience only and do not imply endorsement or approval of such websites. We are not responsible for the content or practices of any third-party websites.</p>
+            <h4 className="font-semibold text-dark mt-4">7. Privacy</h4>
+            <p>Your privacy is important to us. Please review our Privacy Policy, which explains how we collect, use, and protect your personal information. By using our services, you agree to the terms of our Privacy Policy.</p>
+            <h4 className="font-semibold text-dark mt-4">8. Termination</h4>
+            <p>We reserve the right to terminate or suspend your access to our services at any time, without notice, for any reason, including violation of these terms. Upon termination, all provisions that should survive will remain in effect.</p>
+            <h4 className="font-semibold text-dark mt-4">9. Dispute Resolution</h4>
+            <p>Any disputes arising from these terms or your use of our services shall be resolved through binding arbitration in accordance with the rules of the Mauritian International Arbitration Centre. The arbitration will take place in Mauritius.</p>
+            <h4 className="font-semibold text-dark mt-4">10. Governing Law</h4>
+            <p>These terms are governed by the laws of Mauritius, where ME-AFRICA is based. Any legal action or proceeding related to these terms shall be brought exclusively in the courts of Mauritius.</p>
+            <h4 className="font-semibold text-dark mt-4">11. Changes to Terms</h4>
+            <p>We reserve the right to modify these terms at any time. Any changes will be posted on this page with an updated revision date. Your continued use of our services after any such changes constitutes acceptance of the new terms.</p>
+            <h4 className="font-semibold text-dark mt-4">12. Contact Information</h4>
+            <p>If you have any questions about these Terms of Service, please contact us through our website or reach out to us directly. We are happy to clarify any aspect of these terms.</p>
+          </>
+        }
+      />
     </div>
   );
 }
